@@ -1,20 +1,32 @@
 {
-  "name": "com.mz.simple-save",
-  "version": "1.0.0",
-  "displayName": "Simple Save",
-  "description": "Simple Json saving and loading",
-  "unity": "2020.3",
-  "dependencies": {
-    "com.unity.some-package": "1.0.0",
-    "com.unity.other-package": "2.0.0"
- },
- "keywords": [
-    "saving",
-    "json"
-  ],
-  "author": {
-    "name": "Marcel Zöller",
-    "email": "marcelzoeller@gmail.com",
-    "url": "https://marcelzoeller.github.com"
-  }
+	"name": "marcelzoeller.simple-save",
+	"displayName": "Simple Save for Unity",
+	"version": "1.0.0",
+	"unity": "2020.3",
+	"description": "Simple Json saving and loading",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/MarcelZoeller/SimpleSave.git"
+	},
+	"keywords": [
+		"json",
+		"json.net",
+		"newtonsoft",
+		"newtonsoft.json",
+		"unity",
+		"upm"
+	],
+	"author": "marcelzoeller",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/marcelzoeller/SimpleSave/issues"
+	},
+	"homepage": "https://github.com/marcelzoeller/SimpleSave",
+	"category": "Utility",
+	"dependencies": {},
+	"type": "library"
 }
