@@ -1,0 +1,20 @@
+{
+  "name": "com.mz.simple-save",
+  "version": "1.0.0",
+  "displayName": "Simple Save",
+  "description": "Simple Json saving and loading",
+  "unity": "2020.3",
+  "dependencies": {
+    "com.unity.some-package": "1.0.0",
+    "com.unity.other-package": "2.0.0"
+ },
+ "keywords": [
+    "saving",
+    "json"
+  ],
+  "author": {
+    "name": "Marcel Zöller",
+    "email": "marcelzoeller@gmail.com",
+    "url": "https://marcelzoeller.github.com"
+  }
+}
