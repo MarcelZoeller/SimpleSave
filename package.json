@@ -1,7 +1,7 @@
 {
 	"name": "marcelzoeller.simple-save",
 	"displayName": "Simple Save for Unity",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"unity": "2020.3",
 	"description": "Simple Json saving and loading",
 	"main": "index.js",
@@ -27,6 +27,8 @@
 	},
 	"homepage": "https://github.com/marcelzoeller/SimpleSave",
 	"category": "Utility",
-	"dependencies": {},
+	"dependencies": {
+    "com.unity.nuget.newtonsoft-json": "2.0.0"
+  },
 	"type": "library"
 }

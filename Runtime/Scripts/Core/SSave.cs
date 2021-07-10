@@ -1,9 +1,10 @@
-// Simple Save by Marcel Zöller
+// Simple Save by Marcel Zï¿½ller
 
 using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Newtonsoft.Json;
+using System.Collections;
 
 namespace SimpleSave
 {
@@ -66,6 +67,16 @@ namespace SimpleSave
 
         public static T ConvertObject<T>(object value)
         {
+            if (typeof(T) == typeof(IDictionary))
+            {
+                Debug.Log("its a Dictionary" + value);
+            }
+
+
+            if (typeof(T) == typeof(string))
+                return (T)value;
+            
+            
             if (typeof(T) == typeof(int))
                 value = Convert.ToInt32(value);
 
@@ -84,12 +95,39 @@ namespace SimpleSave
                 if (value != null)
                 {
                     Debug.Log("value" + value);
-                    value = JsonConvert.DeserializeObject<T>(value.ToString(), jsonSerializerSettings);
+                    return (T)JsonConvert.DeserializeObject<T>(value.ToString(), jsonSerializerSettings);
                 }
             }
+
+            
+
+
+
+                else// Testing
+            value = JsonConvert.DeserializeObject<T>(value.ToString(), jsonSerializerSettings);
+
             //Debug.Log(value);
             return (T)value;
         }
+
+
+
+
+        //public override bool CanConvert(Type objectType)
+        //{
+        //    return (typeof(IDictionary).IsAssignableFrom(objectType) ||
+        //            TypeImplementsGenericInterface(objectType, typeof(IDictionary<,>)));
+        //}
+
+        //private static bool TypeImplementsGenericInterface(Type concreteType, Type interfaceType)
+        //{
+        //    return concreteType.GetInterfaces()
+        //           .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == interfaceType);
+        //}
+
+
+
+
         public static bool WriteFile(Dictionary<string, object> data, SimpleSaveSettings settings)
         {
             string json = JsonConvert.SerializeObject(data, jsonSerializerSettings);

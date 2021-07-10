@@ -1,6 +1,9 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
@@ -49,7 +52,39 @@ namespace SimpleSave
                 contract.Converter = new SaveableScriptableObjectConverter();
             }
 
+
+            if (objectType == typeof(Dictionary<SimpleSaveManager.v2, string>))
+            {
+                Debug.Log("aha!!!");
+                contract.Converter = new CustomDictionaryConverter<SimpleSaveManager.v2, string>();
+            }
+
+            //if (objectType.IsGenericType && objectType.GetGenericTypeDefinition() == typeof(Dictionary<,>))
+            //{
+            //    Type keyType = objectType.GetGenericArguments()[0];
+            //    Type valueType = objectType.GetGenericArguments()[1];
+
+            //    contract.Converter = new CustomDictionaryConverter<int, int>();
+            //}
+
+            if((objectType.IsGenericType && (objectType.GetGenericTypeDefinition() == typeof(IDictionary<,>) 
+                || objectType.GetGenericTypeDefinition() == typeof(Dictionary<,>))) 
+                && objectType != typeof(Dictionary<string,object>))
+            {
+                contract.Converter = new DictionaryJsonConverter();
+            }
+
             
+
+
+            if (objectType == typeof(Dictionary<SimpleSaveManager.v2, string>))
+            {
+                Debug.Log("aha!!!");
+                contract.Converter = new CustomDictionaryConverter<SimpleSaveManager.v2, string>();
+            }
+
+
+
             return contract;
         }
     }
@@ -220,6 +255,177 @@ namespace SimpleSave
         }
 
     }
+
+
+
+
+
+
+
+
+
+
+
+    //public class DeepDictionaryConverter : JsonConverter
+    //{
+    //    public override bool CanConvert(Type objectType)
+    //    {
+    //        return (typeof(IDictionary).IsAssignableFrom(objectType) ||
+    //                TypeImplementsGenericInterface(objectType, typeof(IDictionary<,>)));
+    //    }
+
+    //    private static bool TypeImplementsGenericInterface(Type concreteType, Type interfaceType)
+    //    {
+    //        return concreteType.GetInterfaces()
+    //               .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == interfaceType);
+    //    }
+
+    //    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+    //    {
+    //        Type type = value.GetType();
+    //        IEnumerable keys = (IEnumerable)type.GetProperty("Keys").GetValue(value, null);
+    //        IEnumerable values = (IEnumerable)type.GetProperty("Values").GetValue(value, null);
+    //        IEnumerator valueEnumerator = values.GetEnumerator();
+
+    //        writer.WriteStartArray();
+    //        foreach (object key in keys)
+    //        {
+    //            valueEnumerator.MoveNext();
+
+    //            writer.WriteStartArray();
+    //            serializer.Serialize(writer, key);
+    //            serializer.Serialize(writer, valueEnumerator.Current);
+    //            writer.WriteEndArray();
+    //        }
+    //        writer.WriteEndArray();
+    //    }
+
+    //    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
+    //}
+
+
+
+
+    public class CustomDictionaryConverter<TKey, TValue> : JsonConverter
+    {
+        public override bool CanConvert(Type objectType) => objectType == typeof(Dictionary<TKey, TValue>);
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+            => serializer.Serialize(writer, ((Dictionary<TKey, TValue>)value).ToList());
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+            => serializer.Deserialize<KeyValuePair<TKey, TValue>[]>(reader).ToDictionary(kv => kv.Key, kv => kv.Value);
+    }
+
+
+
+    public class DictionaryJsonConverter : JsonConverter
+    {
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            var dictionary = (IDictionary)value;
+
+            writer.WriteStartArray();
+
+            foreach (var key in dictionary.Keys)
+            {
+                writer.WriteStartObject();
+
+                writer.WritePropertyName("Key");
+
+                serializer.Serialize(writer, key);
+
+                writer.WritePropertyName("Value");
+
+                serializer.Serialize(writer, dictionary[key]);
+
+                writer.WriteEndObject();
+            }
+
+            writer.WriteEndArray();
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            if (!CanConvert(objectType))
+                throw new Exception(string.Format("This converter is not for {0}.", objectType));
+
+            var keyType = objectType.GetGenericArguments()[0];
+            var valueType = objectType.GetGenericArguments()[1];
+            var dictionaryType = typeof(Dictionary<,>).MakeGenericType(keyType, valueType);
+            var result = (IDictionary)Activator.CreateInstance(dictionaryType);
+
+            if (reader.TokenType == JsonToken.Null)
+                return null;
+
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndArray)
+                {
+                    return result;
+                }
+
+                if (reader.TokenType == JsonToken.StartObject)
+                {
+                    AddObjectToDictionary(reader, result, serializer, keyType, valueType);
+                }
+            }
+
+            return result;
+        }
+
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType.IsGenericType && (objectType.GetGenericTypeDefinition() == typeof(IDictionary<,>) || objectType.GetGenericTypeDefinition() == typeof(Dictionary<,>));
+        }
+
+        private void AddObjectToDictionary(JsonReader reader, IDictionary result, JsonSerializer serializer, Type keyType, Type valueType)
+        {
+            object key = null;
+            object value = null;
+
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject && key != null)
+                {
+                    result.Add(key, value);
+                    return;
+                }
+
+                var propertyName = reader.Value.ToString();
+                if (propertyName == "Key")
+                {
+                    reader.Read();
+                    key = serializer.Deserialize(reader, keyType);
+                }
+                else if (propertyName == "Value")
+                {
+                    reader.Read();
+                    value = serializer.Deserialize(reader, valueType);
+                }
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public class SaveableScriptableObjectConverter : JsonConverter //where T: SaveableScriptableObjects
     {
