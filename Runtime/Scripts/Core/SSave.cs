@@ -94,7 +94,7 @@ namespace SimpleSave
             {
                 if (value != null)
                 {
-                    Debug.Log("value" + value);
+                    //Debug.Log("value" + value);
                     return (T)JsonConvert.DeserializeObject<T>(value.ToString(), jsonSerializerSettings);
                 }
             }
@@ -104,7 +104,10 @@ namespace SimpleSave
 
 
                 else// Testing
-            value = JsonConvert.DeserializeObject<T>(value.ToString(), jsonSerializerSettings);
+            {
+                //Debug.Log("type: " + typeof(T) + " " + typeof(T).Name);
+                //value = JsonConvert.DeserializeObject<T>(value.ToString(), jsonSerializerSettings);
+            }
 
             //Debug.Log(value);
             return (T)value;

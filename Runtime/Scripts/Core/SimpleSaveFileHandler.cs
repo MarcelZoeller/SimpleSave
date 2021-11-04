@@ -85,9 +85,13 @@ namespace SimpleSave
             catch (Exception exception)
             {
                 if (exception is FileNotFoundException)
-                    Debug.Log($"No File Found. Create new.");
+                {
+                    //Debug.Log($"No File Found. Create new.");
+                }
                 else
-                    Debug.Log($"Failed to read from {GetFullPath(settings)} with exception {exception}");
+                {
+                    //Debug.Log($"Failed to read from {GetFullPath(settings)} with exception {exception}");
+                }
                 data = "";
                 return false;
             }
@@ -103,6 +107,11 @@ namespace SimpleSave
         {
             return File.Exists(GetFullPath(settings));
             
+        }
+
+        public static void Delete(SimpleSaveSettings settings)
+        {
+            File.Delete(GetFullPath(settings));
         }
 
         public static ICryptoTransform GetAESEncryptor(string password)

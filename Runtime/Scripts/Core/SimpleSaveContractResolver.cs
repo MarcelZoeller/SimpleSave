@@ -42,21 +42,14 @@ namespace SimpleSave
 
             if (objectType.IsSubclassOf(typeof(SaveableScriptableObjects)))
             {
-                Debug.Log("subclass! " + objectType.FullName);
+                //Debug.Log("subclass! " + objectType.FullName);
                 contract.Converter = new SaveableScriptableObjectConverter();
             }
 
             if (objectType == typeof(SaveableScriptableObjects))
             {
-                Debug.Log("soso " + objectType.FullName);
+                //Debug.Log("soso " + objectType.FullName);
                 contract.Converter = new SaveableScriptableObjectConverter();
-            }
-
-
-            if (objectType == typeof(Dictionary<SimpleSaveManager.v2, string>))
-            {
-                Debug.Log("aha!!!");
-                contract.Converter = new CustomDictionaryConverter<SimpleSaveManager.v2, string>();
             }
 
             //if (objectType.IsGenericType && objectType.GetGenericTypeDefinition() == typeof(Dictionary<,>))
@@ -75,13 +68,6 @@ namespace SimpleSave
             }
 
             
-
-
-            if (objectType == typeof(Dictionary<SimpleSaveManager.v2, string>))
-            {
-                Debug.Log("aha!!!");
-                contract.Converter = new CustomDictionaryConverter<SimpleSaveManager.v2, string>();
-            }
 
 
 

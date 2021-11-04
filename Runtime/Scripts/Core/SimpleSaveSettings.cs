@@ -47,5 +47,10 @@ namespace SimpleSave
                     return Application.persistentDataPath;
             }
         }
+
+        public string GetCurrentPath()
+        {
+            return GetPath(path);
+        }
     }
 }

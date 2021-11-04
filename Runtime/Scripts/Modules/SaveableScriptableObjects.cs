@@ -35,7 +35,7 @@ namespace SimpleSave
             if (iDDictionary == null || iDDictionary.Count == 0) SetupIDDictionary<T>();
             else
             {
-                Debug.Log("ther is a dict for " + typeof(T).FullName +" with "+ iDDictionary.Count);
+                //Debug.Log("ther is a dict for " + typeof(T).FullName +" with "+ iDDictionary.Count);
             }
 
             if (id == null || !iDDictionary.ContainsKey(id))

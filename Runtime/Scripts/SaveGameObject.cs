@@ -4,11 +4,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SimpleSave
-{
+
     public class SaveGameObject : MonoBehaviour
     {
         public string id;
+
+        public object SaveManager { get; private set; }
+
+        public void SetID (string ID)
+        {
+            id = ID;
+        }
 
         [ContextMenu("Generate new Id")]
         private void GenerateId()
@@ -16,20 +22,9 @@ namespace SimpleSave
             id = gameObject.name + "_" + Guid.NewGuid().ToString();
         }
 
-        [ContextMenu("Save")]
-        public void Save()
-        {
-            SSave.Save(id, GetAllComponents());
-        }
-
-        [ContextMenu("Load")]
-        public void Load()
-        {
-            SetAllComponents(SSave.Load<object>(id));
-        }
 
 
-        public object GetAllComponents()
+        public object CaptureAllComponents()
         {
             var data = new Dictionary<string, object>();
             ISaveable[] saveables = GetComponents<ISaveable>();
@@ -40,7 +35,7 @@ namespace SimpleSave
             return data;
         }
 
-        public void SetAllComponents(object data)
+        public void RestoreAllComponents(object data)
         {
             var stateDictionary = (Dictionary<string, object>)data;
             foreach (var saveable in GetComponents<ISaveable>())
@@ -54,6 +49,8 @@ namespace SimpleSave
 
         string GetTypeName(ISaveable iSaveable) => iSaveable.GetType().ToString();
 
+        
+
     }
-}
+
 
